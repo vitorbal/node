@@ -146,7 +146,7 @@ static Persistent<String> tick_callback_sym;
 static bool use_uv = true;
 
 // disabled by default for now
-static bool use_js_dispatch = false;
+static bool use_domains = false;
 
 // disabled by default for now
 static bool use_http1 = false;
@@ -1084,7 +1084,7 @@ void MakeCallback(Handle<Object> object,
                   Handle<Value> argv[]) {
   HandleScope scope;
 
-  if (use_js_dispatch) {
+  if (use_domains) {
     // If this assert fires it means that somehow we're getting into the event
     // loop before Load() function could complete.
     assert(!process_dispatch.IsEmpty());
@@ -2056,7 +2056,7 @@ static Handle<Object> GetFeatures() {
   );
 
   obj->Set(String::NewSymbol("uv"), Boolean::New(use_uv));
-  obj->Set(String::NewSymbol("js_dispatch"), Boolean::New(use_js_dispatch));
+  obj->Set(String::NewSymbol("domains"), Boolean::New(use_domains));
   obj->Set(String::NewSymbol("http1"), Boolean::New(use_http1));
   obj->Set(String::NewSymbol("ipv6"), True()); // TODO ping libuv
   obj->Set(String::NewSymbol("tls_npn"), Boolean::New(use_npn));
@@ -2340,8 +2340,8 @@ static void ParseArgs(int argc, char **argv) {
     } else if (!strcmp(arg, "--use-legacy")) {
       use_uv = false;
       argv[i] = const_cast<char*>("");
-    } else if (!strcmp(arg, "--use-js-dispatch")) {
-      use_js_dispatch = true;
+    } else if (!strcmp(arg, "--domains")) {
+      use_domains = true;
       argv[i] = const_cast<char*>("");
     } else if (!strcmp(arg, "--use-http1")) {
       use_http1 = true;
