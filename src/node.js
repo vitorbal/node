@@ -45,6 +45,8 @@
     process.__proto__ = EventEmitter.prototype;
     process.EventEmitter = EventEmitter; // process.EventEmitter is deprecated
 
+    process.dispatch = dispatch;
+
     startup.globalVariables();
     startup.globalTimeouts();
     startup.globalConsole();
@@ -508,6 +510,12 @@
   NativeModule.prototype.cache = function() {
     NativeModule._cache[this.id] = this;
   };
+
+  // The single entry point for all outside world calls into Javascript.
+  // (It may not yet be th single entry point yet. v0.6 requires it to be.)
+  function dispatch(obj, method, arg0, arg1, arg2, arg3) {
+    obj[method](arg0, arg1, arg2, arg3);
+  }
 
   startup();
 });
