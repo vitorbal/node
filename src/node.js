@@ -514,7 +514,15 @@
   // The single entry point for all outside world calls into Javascript.
   // (It may not yet be th single entry point yet. v0.6 requires it to be.)
   function dispatch(obj, method, arg0, arg1, arg2, arg3) {
+    if (obj.domain) {
+      obj.domain.enter();
+    } else {
+      process.defaultDomain.enter();
+    }
+
     obj[method](arg0, arg1, arg2, arg3);
+
+    global.domain = null;
   }
 
   startup();
