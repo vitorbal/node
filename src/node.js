@@ -521,7 +521,12 @@
       domain.enter();
     }
 
-    obj[method](arg0, arg1, arg2, arg3);
+    try {
+      obj[method](arg0, arg1, arg2, arg3);
+    } catch (e) {
+      domain.emit('error', e);
+      domain.kill();
+    }
 
     if (domain) {
       domain.exit();

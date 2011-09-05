@@ -23,15 +23,28 @@ var common = require('../common');
 var assert = require('assert');
 var domain = require('domain');
 
+var timerCalled = false;
+
 console.log("default domain");
 
 var d = domain.create({ hello: "world" }, function(a) {
   console.log("inside the domain");
   assert.deepEqual(a, { hello: "world" });
+
+  setTimeout(function() {
+    timerCalled = true;
+  }, 1000);
+
+  throw new Error("synthetic error");
 });
 
 
-d.on("exit", function() {
+d.on("error", function(e) {
+  assert.equal(e.message, "synthetic error");
   console.log("domain exited");
 });
 
+
+process.on('exit', function() {
+  assert.equal(false, timerCalled);
+});
