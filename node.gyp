@@ -16,6 +16,7 @@
       'lib/console.js',
       'lib/constants.js',
       'lib/crypto.js',
+      'lib/domain.js',
       'lib/dgram_legacy.js',
       'lib/dgram_uv.js',
       'lib/dns_legacy.js',
