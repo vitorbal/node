@@ -194,7 +194,7 @@
 
       try {
         for (var i = 0; i < l; i++) {
-          nextTickQueue[i]();
+          dispatch(nextTickQueue, i);
         }
       }
       catch (e) {
@@ -515,16 +515,19 @@
   // (It may not yet be th single entry point yet. v0.6 requires it to be.)
   function dispatch(obj, method, arg0, arg1, arg2, arg3) {
     assert(arguments.length < 7);
-
-    if (obj.domain) {
-      obj.domain.enter();
+ 
+    var domain = obj.domain;
+    if (domain) {
+      domain.enter();
     }
 
     obj[method](arg0, arg1, arg2, arg3);
 
-    if (obj.domain) {
-      obj.domain.exit();
+    if (domain) {
+      domain.exit();
     }
+
+    NativeModule.require('domain').pollNewDomains();
   }
 
   startup();
